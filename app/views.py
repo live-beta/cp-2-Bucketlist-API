@@ -157,3 +157,15 @@ class BucketAction(Resource):
             save(bucketlist_info)
             msg =("Bucketlist ID: " +str(bucketlist_info.id)+"Is Updated")
             return {"message": msg},200
+
+    def delete(self, id=None):
+
+        """Deleting a bucketlist"""
+        if not id:
+            abort(400,"bad request")
+        bucketlist_del =Bucketlist.query.filter_by(id=id).first()
+        if not bucketlist_del or (bucketlist_del.user != g.user.id):
+            abort(404,"The bucketlist is not in the system")
+        delete(bucketlist_del)
+        msg =("bucketlist : "+ bucketlist_del.name + "Deleted successfully")
+        return {"message":msg},200
