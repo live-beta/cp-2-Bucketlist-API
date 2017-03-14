@@ -12,9 +12,9 @@ token_auth = HTTPTokenAuth("Bearer")
 @token_auth.verify_token
 def verify_token(token):
     """ Verifies the user authentication token"""
-    user_active_id = User.token_confirm(token)
+    user_active_id = User.comfirm_token(token)
     if user_active_id:
-        g.user =User.quey.filter_by(id=user_active_id).first()
+        g.user =User.query.filter_by(id=user_active_id).first()
         return True
     return False
 

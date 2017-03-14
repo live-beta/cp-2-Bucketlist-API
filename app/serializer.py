@@ -10,7 +10,7 @@ Entryformat = {"id": fields.Integer,"name": fields.String,"date_created": fields
 
 bucketlistformat ={"id":fields.Integer,
                     "name":fields.String,
-                    "Entries":fields.List(fields.Nested(itemformat)),
+                    "Entries":fields.List(fields.Nested(Entryformat)),
                     "date_created": fields.DateTime(),
-                    "date_modified": field.DateTime(),
-                    "creator": field.String(attribute="user.username")}
+                    "date_modified": fields.DateTime(),
+                    "creator": fields.String(attribute="user.username")}

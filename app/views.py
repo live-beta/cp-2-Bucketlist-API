@@ -1,9 +1,10 @@
+#! /usr/bin/env python
 import re
-import flask_restful import abort, inputs, Resource,reqparse, marshal_with
+from flask_restful import abort, inputs, Resource,reqparse, marshal_with
 from flask import abort, jsonify, request
 from app import db, expiry_time
 from app.models import User,Bucketlist,Entry
-from app.authenticate import token_auth, g
+from app.user_auth import token_auth, g
 from app.utils import save,delete, is_not_empty
 from app.serializer import bucketlistformat
 
@@ -14,9 +15,9 @@ class LoginUser(Resource):
         # Input validation by request perser
 
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('username',type=str, required=True, location='json',help="Enter Username")
-                self.reqparse.add_argument('username',type=str, required=True, location='json',help="Enter Username")
-        self.reqparse.add_argument('password',type=str, required=True, location='json',help="Enter the password")
+        #self.reqparse.add_argument('username',type=str, required=True, location='json',help="Enter Username")
+        self.reqparse.add_argument('username',type=str, required=True, help="Enter Username")
+        self.reqparse.add_argument('password',type=str, required=True, help="Enter the password")
 
         super(LoginUser, self).__init__()
 
@@ -28,10 +29,10 @@ class LoginUser(Resource):
 
         username, password =args["username"], args["password"]
         user = User.query.filter_by(username =username).first()
-        if not user or not user.verify_password(password):
+        if not user or not user.auth_password(password):
             return {"message":"Could not log you in, Check credentials"}
         # returnign token as as dtring from decode function
-        token = user.generate_confirmation_token(expiry_time)
+        token = user.confirmation_token(expiry_time)
         return {"token": token.decode("ascii")}, 200
 
 class RegisterUser(Resource):
@@ -41,19 +42,18 @@ class RegisterUser(Resource):
         # validating inputs for
         self.reqparse = reqparse.RequestParser()
         # persing the unsername
-        self.reqparse.add_argument("username", type= str, required=True, location = "json", help="Enter a user name")
+        self.reqparse.add_argument("username", type= str, required=True, help="Enter a user name")
         # Parsing the user password
-        self.reqparse.add_argument("password", type=str, required =True,location="json", help="Enter a password")
-
+        self.reqparse.add_argument("password", type= str, required =True, help="Enter a password")
         # persing the user email
-        self.reqparse.add_argument("email",type=str,required=True,location="json",help="Enter an email")
+        self.reqparse.add_argument("email",type=str,required=True, help="Enter an email")
+
         super(RegisterUser, self).__init__()
 
     def post(self):
         """ Function to create a new user"""
         args = self.reqparse.parse_args()
-        username,password, email =(args["username"].lower()),
-                                    args["password"],args["email"])
+        username,password, email =(args["username"].lower(),args["password"],args["email"])
         # validating the user inputs using regular expressions
         if not re.match("^[a-zA-Z0-9_.-]+$",username):
             return{"message":("only numbers, letters, '-','-','.' allowed"
@@ -72,7 +72,7 @@ class RegisterUser(Resource):
 
         if user_info is not None:
             return{"message": "The username you have entered is not available, try a different one"},403
-        user =User(username=username,email=email,password=password)
+        user =User(username=username, email=email, password=password)
         save(user)
         # Return a message id the user has been successfully added to the system
 
@@ -93,7 +93,7 @@ class BucketAction(Resource):
         """ Function to make a new bucketlist"""
         if id:
             abort(400,"This is a bad request, try again")
-        self.reqparse.add_argument("name", type=str, required=True,location="json", help="A bucketlist name is required")
+        self.reqparse.add_argument("name", type=str, required=True, help="A bucketlist name is required")
         args = self.reqparse.parse_args()
         name = args["name"]
 
@@ -105,7 +105,7 @@ class BucketAction(Resource):
             return{"message":"The name you have entered is not relevant"}, 400
 
         # creating and saving an instance of a bucket
-        bucket_instance = Bucketlist(name=name, user_id=g.user_id)
+        bucket_instance = Bucketlist(name=name, user_id=g.user.id)
         save(bucket_instance)
         msg = (bucket_instance.name+"of ID"+str(bucket_instance.id)+" Has been saved successfully")
         return {"message":msg},201
@@ -113,7 +113,7 @@ class BucketAction(Resource):
     @marshal_with(bucketlistformat)
     def get(self, id=None):
         """Getting formatted bucketlist """
-        search = reuests.args.get("q") or None
+        search = request.args.get("q") or None
         page =request.args.get("page") or 1
         limit = request.args.get("limit") or 20
         if id:
@@ -128,7 +128,7 @@ class BucketAction(Resource):
             if len(bucket_search_results.items) == 0:
                 abort(404,"The bucketlist seems to be missing")
             else:
-                bucket_res =[bucket_res for bucket_res in bucket_search_results]
+                bucket_res =[bucket_res for bucket_res in bucket_search_results.items]
                 return bucket_res,200
 
         if page or limit:
@@ -140,7 +140,7 @@ class BucketAction(Resource):
         """ Alterin the contents of a bucketlist"""
         if not id:
             return {"message":"Bad request"},400
-            self.reqparse.add_argument("name",type=str,required=True,location="json",help="Bucketlist Name is required")
+            self.reqparse.add_argument("name",type=str,required=True,help="Bucketlist Name is required")
 
             args = self.reqparse.parse_args()
             name= args["name"]
@@ -169,3 +169,69 @@ class BucketAction(Resource):
         delete(bucketlist_del)
         msg =("bucketlist : "+ bucketlist_del.name + "Deleted successfully")
         return {"message":msg},200
+
+class EntryAction(Resource):
+    """ this class handles CRUD operations for items in bucketlist"""
+    decorators = [token_auth.login_required]
+
+    def __init__(self):
+        """ add request parser to validate inputs"""
+        self.reqparse = reqparse.RequestParser()
+        super(EntryAction, self).__init__()
+
+    def post(self, id=None):
+        """ make a new Entry """
+        self.reqparse.add_argument("name", type=str, required=True,help="Item name required")
+        args = self.reqparse.parse_args()
+        name = args["name"]
+        # validation of user inputs
+        if not is_not_empty(name):
+            return {"message": "no blank fields allowed"}, 400
+        if name.isspace():
+            return {"message": "name is invalid"}, 400
+        bucketlist = Bucketlist.query.filter_by(id=id).first()
+        if not bucketlist or (bucketlist.user_id != g.user.id):
+            abort(404, "bucketlist not found, confirm the id")
+        entry = Entry(name=name, bucket_id=id)
+        save(entry)
+        msg = ("item has been added to the bucketlist")
+        return {"message": msg}, 201
+
+    def put(self, id=None, entry_id=None):
+        """ modify an item given name and status or combination of both"""
+        self.reqparse.add_argument("name", type=str,help="item name required")
+        self.reqparse.add_argument("status", type=inputs.boolean,
+                                   location="json",
+                                   help="status required as true or false")
+        args = self.reqparse.parse_args()
+        name, status = args["name"], args["status"]
+        if not id or not entry_id:
+            abort(400, "bad request")
+        if name is None and status is None:
+            abort(400, "provide at least one parameter to change")
+
+        bucket = Bucketlist.query.filter_by(id=id).first()
+        entry = Entry.query.filter_by(id=entry_id).first()
+        if not bucket or (bucket.user_id != g.user.id) or not entry:
+            abort(404, "item not found, confirm bucketlist and item id")
+
+        if status is True or status is False:
+            entry.status = status
+        if name is not None:
+            if not is_not_empty(name):
+                return {"message": "name can't be blank"}, 400
+            if name.isspace():
+                return {"message": "name is invalid"}, 400
+            entry.name = name
+
+        return {"message": "item has been updated"}, 200
+
+    def delete(self, id=None, entry_id=None):
+        """ delete the item """
+        bucket = Bucketlist.query.filter_by(id=id).first()
+        entry = Entry.query.filter_by(id=entry_id).first()
+        if not bucket or (bucket.user_id != g.user.id) or not entry:
+            abort(404, "item not found, confirm bucketlist and item id")
+        delete(entry)
+
+        return {"message": "item has been deleted successfully"}, 200

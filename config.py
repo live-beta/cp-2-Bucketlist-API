@@ -10,7 +10,6 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS =False
 
     @staticmethod
-
     def init_app(app):
         pass
 
@@ -25,16 +24,13 @@ class Development(Config):
     app.config['SQLALCHEMY_DATABASE_URI'] = ('postgresql://bucketlist:bucketlist@localhost/bucketlist')
     """
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-            'sqlite:///'+ os.path.join(basedir,'dev_data.db')
+            'sqlite:///'+ os.path.join(basedir,'data-dev.db')
 
 class Testing(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or  \
-            'sqlite:///' + os.path.join(basedir,'test_data.db')
+            'sqlite:///' + os.path.join(basedir,'data-test.db')
 
-configset ={
-    "development":development,
-    "Testing": Testing,
-    "default":Development
-}
+configset = {"development":Development, "Testing": Testing, "default": Development}
+
 expiry_time = 4000
