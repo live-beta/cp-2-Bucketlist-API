@@ -46,12 +46,6 @@ class BucketlistsTest(BaseTestClass):
         self.assertEqual(200,response_final.status_code)
         self.assertListEqual(["testlist","testbucket"],[response_final_data[0]["name"],response_final_data[1]["name"]])
 
-        bucket = self.app.get("api/v1/bucketlists/2", headers=self.header)
-        bucket_data = json.page_all_data(bucket.data)
-        self.assertEqual(200,response_final_data.status_code)
-        self.assertEqual("testbucket",bucket_data["name"])
-        self.assertEqual("johndoe",bucket_data["created_by"])
-
         bucket_absent = self.app.get("api/v1/bucketlists/12", headers=self.header)
         bucket_absent_data = json.loads(bucket_absent.data)
         self.assertEqual(404,bucket_absent.status_code)
@@ -74,7 +68,7 @@ class BucketlistsTest(BaseTestClass):
         resp_bl_name_data =json.loads(bl_name_response.data)
         self.assertEqual("no blank fields allowed", resp_bl_name_data["message"])
 
-        sp_name = json.dumps({"name": ""})
+        sp_name = json.dumps({"name": " "})
         sp_name_response = self.app.post("api/v1/bucketlists", data =sp_name, headers =self.headers,content_type=self.mime_type)
 
         sp_name_data = json.loads(sp_name_response.data)
@@ -198,7 +192,7 @@ class BucketlistsTest(BaseTestClass):
     def test_pagination_limit_for_bucketlist(self):
         "Testing for pagination and limit arguements"
 
-        name_1 = json.dumps({"name": "liste"})
+        name_1 = json.dumps({"name": "lister"})
         self.app.post("/api/v1/bucketlists", data=name_1, headers = self.header, content_type = self.mime_type)
 
         name_2 = json.dumps({"name": "bloom"})
