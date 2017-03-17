@@ -6,7 +6,7 @@ from app import db, expiry_time
 from app.models import User, Bucketlist, Item
 from app.user_auth import token_auth, g
 from app.utils import save, delete, is_not_empty
-from app.serializer import bucketlistformat
+from app.serializer import bucketlistformat, Itemformat
 
 
 class LoginUser(Resource):
@@ -32,7 +32,7 @@ class LoginUser(Resource):
         username, password = args["username"], args["password"]
         user = User.query.filter_by(username=username).first()
         if not user or not user.auth_password(password):
-            return {"message": "Could not log you in, Check credentials"} 
+            return {"message": "Could not log you in, Check credentials"}
         # returnign token as as dtring from decode function
         token = user.confirmation_token(expiry_time)
         return {"token": token.decode("ascii")}, 200
@@ -249,6 +249,36 @@ class ItemAction(Resource):
             item.name = name
 
         return {"message": "item has been updated"}, 200
+
+    @marshal_with(Itemformat)
+    def get(self, id=None, Item_id=None):
+        """Getting formatted list of items """
+        search = request.args.get("q") or None
+        page = request.args.get("page") or 1
+        limit = request.args.get("limit") or 20
+        if id:
+            item_obj = Item.query.filter_by(id=Item_id).first()
+            if not item_obj:
+                abort(404, "The requested item is not found")
+            return item_obj, 200
+        if search:
+            item_search_results = Item.query.filter(Item.name.ilike(
+                "%" + search + "%")).filter_by(user_id=g.user.id).paginate(int(page),
+                                                                           int(limit),
+                                                                           False)
+
+            if len(item_search_results.items) == 0:
+                abort(404, "The bucketlist seems to be missing")
+            else:
+                item_res = [item_res for item_res in
+                              item_search_results.items]
+                return item_res, 200
+
+        if page or limit:
+            item_collection = Item.query.filter_by(user_id=g.user.id).paginate(int(page),int(limit),False)
+            item_display = [
+                item_disp for item_disp in item_collection.items]
+            return item_display, 200
 
     def delete(self, id=None, Item_id=None):
         """ delete the item """
