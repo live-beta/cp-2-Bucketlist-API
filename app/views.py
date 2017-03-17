@@ -32,7 +32,7 @@ class LoginUser(Resource):
         username, password = args["username"], args["password"]
         user = User.query.filter_by(username=username).first()
         if not user or not user.auth_password(password):
-            return {"message": "Could not log you in, Check credentials"}
+            return {"message": "Could not log you in, Check credentials"}, 401
         # returnign token as as dtring from decode function
         token = user.confirmation_token(expiry_time)
         return {"token": token.decode("ascii")}, 200
