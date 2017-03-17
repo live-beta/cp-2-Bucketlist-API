@@ -1,4 +1,3 @@
-from flask_testing import TestCase
 from Tests.test_setup import BaseTestClass
 from app.models import User
 
@@ -10,15 +9,19 @@ class UserRegisterTest(BaseTestClass):
     def test_user_registration(self):
         " Test that the user has been registered with valid information "
         initial = User.query.count()
-        data = json.dumps({"username":"bob", "password":"bobpass","email":"bob@example.com"})
+        data = json.dumps({"username": "bob",
+                           "password": "bobpass",
+                           "email": "bob@example.com"})
 
-        response = self.app.post("/api/v1/auth/register", data= data, content_type=self.mime_type)
+        response = self.app.post("/api/v1/auth/register",
+                                 data= data,
+                                 content_type=self.mime_type)
         response_data = json.loads(response.data)
 
         final_data = User.query.count()
         self.assertEqual(response.status_code,201)
         self.assertEqual(final_data -initial,1)
-        self.assertEqual(response_data["message"],("user bob has been successfully added"))
+        self.assertEqual(response_data["message"],("You have been successfully added as bob"))
 
     def test_register_existing_username(self):
         "Test that the users are unique"
@@ -63,11 +66,11 @@ class UserRegisterTest(BaseTestClass):
                                                response_nopass.status_code,
                                                response_noemail.status_code])
         self.assertEqual(resp_nouser["message"]["username"],
-                         "username required")
+                         "Enter a user name")
         self.assertEqual(resp_nopass["message"]["password"],
-                         "password required")
+                         "Enter a password")
         self.assertEqual(resp_noemail["message"]["email"],
-                         "email required")
+                         "Enter an email")
 
     def test_bad_details_for_registration(self):
         """test that username can't contain special characters"""
@@ -84,8 +87,8 @@ class UserRegisterTest(BaseTestClass):
         respblank_data = json.loads(response_data_blank.data)
         self.assertListEqual([400, 400], [response.status_code,
                                           response_data_blank.status_code])
-        self.assertIn("allowed in username", resp_data["message"])
-        self.assertIn("password must be 6", respblank_data["message"])
+        self.assertIn("only numbers, letters, '-','-','.' allowedin username entry", resp_data["message"])
+        self.assertIn("password must be 6 characters", respblank_data["message"])
         self.assertEqual(User.query.count(), 2)
 
     def test_blank_arguments_not_allowed(self):
@@ -111,9 +114,9 @@ class UserRegisterTest(BaseTestClass):
         self.assertListEqual([400, 400, 400], [resp_nme.status_code,
                                                resp_pass.status_code,
                                                resp_mail.status_code])
-        self.assertIn("allowed in username", data_nme["message"])
+        self.assertIn("allowedin username", data_nme["message"])
         self.assertIn("password must be", data_pass["message"])
-        self.assertIn("email is invalid", data_mail["message"])
+        self.assertIn("Enter a valid email", data_mail["message"])
         self.assertEqual(User.query.count(), 2)
 
     def test_email_field_basic_validation(self):
@@ -125,7 +128,7 @@ class UserRegisterTest(BaseTestClass):
                                  content_type=self.mime_type)
         resp_data = json.loads(response.data)
         self.assertEqual(400, response.status_code)
-        self.assertEqual("email is invalid", resp_data["message"])
+        self.assertEqual("Enter a valid email", resp_data["message"])
 
     def test_password_salts_are_random(self):
         """ test that hashing algorithm doesn't store equal passwords with an
@@ -183,7 +186,7 @@ class UserLoginTest(BaseTestClass):
         resp_nopassdata = json.loads(resp_nopass.data)
         self.assertListEqual([400, 400], [resp_noname.status_code,
                                           resp_nopass.status_code])
-        self.assertEqual(resp_nonamedata["message"]["username"], ("username"
-                                                                  " required"))
-        self.assertEqual(resp_nopassdata["message"]["password"], ("password"
-                                                                  " required"))
+        self.assertEqual(resp_nonamedata["message"]["username"], ("Enter"
+                                                                  " Username"))
+        self.assertEqual(resp_nopassdata["message"]["password"], ("Enter the"
+                                                                  " password"))

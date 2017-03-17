@@ -26,3 +26,4 @@ ENV/
 *.db
 migrations/
 htmlcov/
+.env

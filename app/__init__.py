@@ -6,7 +6,7 @@ from config import configset, expiry_time
 
 # application url accessibility between app and test
 
-api_blue_print = Blueprint("api",__name__, url_prefix="/api/v1")
+api_blue_print = Blueprint("api", __name__, url_prefix="/api/v1")
 #initialise the Api class
 api = Api(api_blue_print)
 #Initialising SQL alchemy

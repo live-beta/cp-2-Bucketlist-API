@@ -1,5 +1,5 @@
 from flask_httpauth import HTTPTokenAuth
-from flask import jsonify,g
+from flask import jsonify, g
 
 from app.models import User
 
@@ -14,7 +14,7 @@ def verify_token(token):
     """ Verifies the user authentication token"""
     user_active_id = User.comfirm_token(token)
     if user_active_id:
-        g.user =User.query.filter_by(id=user_active_id).first()
+        g.user = User.query.filter_by(id=user_active_id).first()
         return True
     return False
 
