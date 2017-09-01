@@ -61,6 +61,8 @@ class Item(db.Model):
     name = db.Column(db.String(255), nullable=False)
     date_created = db.Column(db.DateTime, nullable=False,
                              default=datetime.utcnow)
+    date_modified = db.Column(db.DateTime, nullable= False,
+                              default=datetime.utcnow)
     status = db.Column(db.Boolean, default=False)
     bucket_id = db.Column(db.Integer, db.ForeignKey('bucketlists.id'),
                           nullable=False)
