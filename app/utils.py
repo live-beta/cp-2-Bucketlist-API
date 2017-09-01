@@ -15,4 +15,3 @@ def delete(target):
 def is_not_empty(*args):
     """Checking none empty passes functions """
     return all(len(value)> 0 for value in args)
-    
