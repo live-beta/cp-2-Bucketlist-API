@@ -113,7 +113,7 @@ class BucketAction(Resource):
         # Validating the user inputs
         if not is_not_empty(name):
             return {"message": "no blank fields allowed"}, 400
-
+        
         if name.isspace():
             return{"message": "The name you have entered is not relevant"}, 400
 
