@@ -35,11 +35,16 @@ class Testing(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or  \
         'sqlite:///' + os.path.join(basedir, 'data-test.db')
 
+class Production(Config):
+
+    DEBUG = False
+    app.config['SQLALCHEMY_DATABASE_URI'] =  ('postgresql://bucketlist:bucketlist@localhost/bucketlist')
+
 
 configset = {
     "development": Development,
     "Testing": Testing,
-    "default": Development
+    "default": Production
 }
 
 expiry_time = 40000
