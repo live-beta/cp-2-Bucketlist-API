@@ -39,7 +39,7 @@ class Testing(Config):
 configset = {
     "development": Development,
     "Testing": Testing,
-    "default": Production
+    "default": Development
 }
 
 expiry_time = 40000
