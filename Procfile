@@ -1,1 +1,1 @@
-web: gunicorn manage:app --preload
+web: python manage.py runserver --host 0.0.0.0 
