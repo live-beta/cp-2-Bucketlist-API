@@ -3,7 +3,7 @@
 import os
 from app import create_app, db, api
 from app.models import User, Bucketlist, Item
-from app.views import LoginUser, RegisterUser, BucketAction, ItemAction
+from app.views import LoginUser, RegisterUser, BucketAction, ItemAction, HomePage
 from flask_script import Manager, Shell, prompt_bool
 from flask_migrate import Migrate, MigrateCommand
 from flask import jsonify
@@ -80,6 +80,7 @@ def dropdb():
 
 
 if __name__ == "__main__":
+    api.add_resource(HomePage,"https://api-mybucketlist.herokuapp.com", endpoint="home_page")
     api.add_resource(LoginUser, "/auth/login", endpoint="token")
     api.add_resource(RegisterUser, "/auth/register", endpoint="register")
     api.add_resource(BucketAction, "/bucketlists",
