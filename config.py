@@ -35,6 +35,18 @@ class Testing(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or  \
         'sqlite:///' + os.path.join(basedir, 'data-test.db')
 
+# class Production(Config):
+
+#     DEBUG= True
+
+#      SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
+#         'sqlite:///' + os.path.join(basedir, 'data-dev.db')
+
+
+#      #app.config['SQLALCHEMY_DATABASE_URI'] = ('postgresql://bucketlist:bucketlist@localhost/bucketlist')
+
+
+
 
 configset = {
     "development": Development,
