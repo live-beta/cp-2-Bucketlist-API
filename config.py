@@ -10,6 +10,7 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'check_point_rules'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SSL_DISABLE = True
 
     @staticmethod
     def init_app(app):
