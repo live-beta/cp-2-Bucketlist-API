@@ -1,1 +1,2 @@
-web: python manage.py runserver --host 0.0.0.0:$PORT 
+web: gunicorn app:app
+

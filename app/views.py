@@ -8,9 +8,6 @@ from app.user_auth import token_auth, g
 from app.utils import save, delete, is_not_empty
 from app.serializer import bucketlistformat
 
-class HomePage(Resource):
-    def get():
-        return {"message": "Welcome Home"}
 
 class LoginUser(Resource):
     """ User login and token production"""
