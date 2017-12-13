@@ -73,7 +73,8 @@ class HerokuConfig(ProductionConfig):
 configset = {
     "development": Development,
     "Testing": Testing,
-    "default": Development
+    "Production": ProductionConfig
+    "default": ProductionConfig
 }
 
 expiry_time = 40000
