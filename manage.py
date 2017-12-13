@@ -79,17 +79,18 @@ def dropdb():
         db.drop_all()
         print("All the data has been deleted")
 
-if __name__ == "manage":
+# if __name__ == "manage":
 
-    api.add_resource(LoginUser, "/auth/login", endpoint="token")
-    api.add_resource(RegisterUser, "/auth/register", endpoint="register")
-    api.add_resource(BucketAction, "/bucketlists",
-                     "/bucketlists/<id>", endpoint="bucketlist")
-    api.add_resource(ItemAction, "/bucketlists/<id>/items",
-                     "/bucketlists/<id>/items/<Item_id>", endpoint="items")
+api.add_resource(LoginUser, "/auth/login", endpoint="token")
+api.add_resource(RegisterUser, "/auth/register", endpoint="register")
+api.add_resource(BucketAction, "/bucketlists",
+                 "/bucketlists/<id>", endpoint="bucketlist")
+api.add_resource(ItemAction, "/bucketlists/<id>/items",
+                 "/bucketlists/<id>/items/<Item_id>", endpoint="items")
 
-    print("i am running"+__name__)
+print("i am running"+__name__)
 
-    manager.run()
-else:
-    print("i dont nkow what you are talking about"+ __name__)
+
+manager.run()
+# else:
+#     print("i dont nkow what you are talking about"+ __name__)
