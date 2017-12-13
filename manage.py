@@ -86,4 +86,9 @@ if __name__ == "__main__":
                      "/bucketlists/<id>", endpoint="bucketlist")
     api.add_resource(ItemAction, "/bucketlists/<id>/items",
                      "/bucketlists/<id>/items/<Item_id>", endpoint="items")
+
+    print("i am running")
+
     manager.run()
+else:
+    print("i dont nkow what you are talking about")
