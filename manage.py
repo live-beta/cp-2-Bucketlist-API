@@ -21,6 +21,13 @@ COV = coverage.coverage(
 )
 COV.start()
 
+api.add_resource(LoginUser, "/auth/login", endpoint="token")
+api.add_resource(RegisterUser, "/auth/register", endpoint="register")
+api.add_resource(BucketAction, "/bucketlists",
+                 "/bucketlists/<id>", endpoint="bucketlist")
+api.add_resource(ItemAction, "/bucketlists/<id>/items",
+                 "/bucketlists/<id>/items/<Item_id>", endpoint="items")
+
 # creting Flask application from app factory
 
 # make custom json error codes
@@ -33,7 +40,7 @@ manager = Manager(app)
 # initialising the migrate clas
 migrate = Migrate(app, db)
 
-server = Server(host="0.0.0.0", port=8000)
+# server = Server(host="0.0.0.0", port=8000)
 
 @app.errorhandler(500)
 def server_error(e):
@@ -79,18 +86,8 @@ def dropdb():
         db.drop_all()
         print("All the data has been deleted")
 
-# if __name__ == "manage":
 
-api.add_resource(LoginUser, "/auth/login", endpoint="token")
-api.add_resource(RegisterUser, "/auth/register", endpoint="register")
-api.add_resource(BucketAction, "/bucketlists",
-                 "/bucketlists/<id>", endpoint="bucketlist")
-api.add_resource(ItemAction, "/bucketlists/<id>/items",
-                 "/bucketlists/<id>/items/<Item_id>", endpoint="items")
-
-print("i am running"+__name__)
-
-
-manager.run()
-# else:
-#     print("i dont nkow what you are talking about"+ __name__)
+if __name__ == "__main__":
+    manager.run()
+else:
+    print("i dont nkow what you are talking about"+ __name__)
