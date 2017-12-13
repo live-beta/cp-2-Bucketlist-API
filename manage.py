@@ -4,7 +4,7 @@ import os
 from app import create_app, db, api
 from app.models import User, Bucketlist, Item
 from app.views import LoginUser, RegisterUser, BucketAction, ItemAction
-from flask_script import Manager, Shell, prompt_bool
+from flask_script import Server, Manager, Shell, prompt_bool
 from flask_migrate import Migrate, MigrateCommand
 from flask import jsonify
 import coverage
@@ -32,6 +32,8 @@ manager = Manager(app)
 
 # initialising the migrate clas
 migrate = Migrate(app, db)
+
+server = Server(host="0.0.0.0", port=8000)
 
 @app.errorhandler(500)
 def server_error(e):
