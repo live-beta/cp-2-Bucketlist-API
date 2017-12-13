@@ -17,7 +17,7 @@ class HomePage(Resource):
 
     def get(self):
 
-        return{"message":" Welcome to Bucketlist API"}
+        return {"message":" Welcome to Bucketlist API"}
         
 class LoginUser(Resource):
     """ User login and token production"""
