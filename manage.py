@@ -44,7 +44,9 @@ migrate = Migrate(app, db)
 
 @app.route('/') 
 def index():
-    return '<h1>Welcome to Bucktlist API!</h1>'
+    return '<h1>Welcome to Bucktlist API!</h1> <br> <br> \
+    Endpoints  "/auth/login", endpoint="token" <br> "/auth/register", endpoint="register" <br>\
+    "/bucketlists", "/bucketlists/<id>", endpoint="bucketlist"'
 
 
 
