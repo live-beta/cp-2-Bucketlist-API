@@ -78,7 +78,7 @@ def dropdb():
         print("All the data has been deleted")
 
 
-if __name__ == "__main__":
+if __name__ == "aboutmanage":
 
     api.add_resource(LoginUser, "/auth/login", endpoint="token")
     api.add_resource(RegisterUser, "/auth/register", endpoint="register")
