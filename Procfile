@@ -1,1 +1,1 @@
-web: gunicorn -b 0.0.0.0:8000 manage runserver
+web: gunicorn manage:manage runserver
