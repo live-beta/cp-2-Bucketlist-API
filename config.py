@@ -74,7 +74,7 @@ configset = {
     "development": Development,
     "Testing": Testing,
     "Production": ProductionConfig,
-    "default": ProductionConfig
+    "default": Development
 }
 
 expiry_time = 40000
