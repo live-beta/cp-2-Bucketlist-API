@@ -1,1 +1,1 @@
-web: gunicorn -runserver 
+web: gunicorn -b $(HOST):$(PORT) runserver 
