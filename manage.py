@@ -22,6 +22,8 @@ COV = coverage.coverage(
 COV.start()
 
 # creting Flask application from app factory
+
+# make custom json error codes
 app = create_app(os.getenv('FLASK_CONFIG')or 'default')
 
 # Initalising the member class
@@ -30,9 +32,6 @@ manager = Manager(app)
 
 # initialising the migrate clas
 migrate = Migrate(app, db)
-
-# make custom json error codes
-
 
 @app.errorhandler(500)
 def server_error(e):
