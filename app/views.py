@@ -9,6 +9,16 @@ from app.utils import save, delete, is_not_empty
 from app.serializer import bucketlistformat
 
 
+class HomePage(Resource):
+    """docstring for HomePage"""
+    # def __init__(self, arg):
+    #     super(HomePage, self).__init__()
+    #     self.arg = arg
+
+    def get(self):
+
+        return{"message":" Welcome to Bucketlist API"}
+        
 class LoginUser(Resource):
     """ User login and token production"""
 
