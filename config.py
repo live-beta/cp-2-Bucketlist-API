@@ -52,6 +52,9 @@ class ProductionConfig(Config):
 
 
 class HerokuConfig(ProductionConfig): 
+
+    # Configuration for heroku deployment
+    
     @classmethod
     def init_app(cls  , app): 
         ProductionConfig.init_app(app)
