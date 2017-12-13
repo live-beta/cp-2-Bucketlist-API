@@ -46,6 +46,11 @@ class Testing(Config):
 
 #      #app.config['SQLALCHEMY_DATABASE_URI'] = ('postgresql://bucketlist:bucketlist@localhost/bucketlist')
 
+class ProductionConfig(Config):
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+    'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+
+
 class HerokuConfig(ProductionConfig): 
     @classmethod
     def init_app(cls  , app): 
