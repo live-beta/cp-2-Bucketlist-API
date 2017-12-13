@@ -1,1 +1,1 @@
-web: gunicorn -b $(HOST):$(PORT) runserver 
+web: gunicorn -b 0.0.0.0:8000 runserver 
