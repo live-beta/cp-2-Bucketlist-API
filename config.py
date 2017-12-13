@@ -46,7 +46,23 @@ class Testing(Config):
 
 #      #app.config['SQLALCHEMY_DATABASE_URI'] = ('postgresql://bucketlist:bucketlist@localhost/bucketlist')
 
+class HerokuConfig(ProductionConfig): 
+    @classmethod
+    def init_app(cls  , app): 
+        ProductionConfig.init_app(app)
+        import logging
+        from logging import StreamHandler
+        file_handler = StreamHandler()
+        file_handler.setLevel(logging.WARNING)
+        app.logger.addHandler(file_handler)
+        SSL_DISABLE = bool(os.environ.get('SSL_DISABLE'))
 
+    @classmethod
+    def init_app(cls, app): # ...
+        # handle proxy server headers
+        from werkzeug.contrib.fixers import ProxyFix 
+        app.wsgi_app = ProxyFix(app.wsgi_app)
+        
 
 
 configset = {
