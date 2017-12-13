@@ -73,7 +73,7 @@ class HerokuConfig(ProductionConfig):
 configset = {
     "development": Development,
     "Testing": Testing,
-    "Production": ProductionConfig
+    "Production": ProductionConfig,
     "default": ProductionConfig
 }
 
