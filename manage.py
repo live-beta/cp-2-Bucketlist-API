@@ -42,6 +42,12 @@ migrate = Migrate(app, db)
 
 # server = Server(host="0.0.0.0", port=8000)
 
+@app.route('/') 
+def index():
+    return '<h1>Welcome to Bucktlist API!</h1>'
+
+
+
 @app.errorhandler(500)
 def server_error(e):
     return jsonify(error=500, message=str(e)), 500
