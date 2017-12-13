@@ -38,9 +38,9 @@ def server_error(e):
     return jsonify(error=500, message=str(e)), 500
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    return jsonify(error=404, message=str(e)+"Access error"), 404
+# @app.errorhandler(404)
+# def page_not_found(e):
+#     return jsonify(error=404, message=str(e)+"Access error"), 404
 
 
 def make_shell_context():
