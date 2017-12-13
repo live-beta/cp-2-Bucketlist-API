@@ -1,2 +1,1 @@
-web: python manage.py runserver --host 0.0.0.0:8000
-
+web: gunicorn manage:app
