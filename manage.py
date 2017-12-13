@@ -27,7 +27,7 @@ api.add_resource(BucketAction, "/bucketlists",
                  "/bucketlists/<id>", endpoint="bucketlist")
 api.add_resource(ItemAction, "/bucketlists/<id>/items",
                  "/bucketlists/<id>/items/<Item_id>", endpoint="items")
-api.add_resource(HomePage,"https://peaceful-citadel-97706.herokuapp.com")
+api.add_resource(HomePage,"https://peaceful-citadel-97706.herokuapp.com", endpoint="Homepage")
 
 # creting Flask application from app factory
 
